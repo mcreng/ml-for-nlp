@@ -1,0 +1,21 @@
+# PyCharm
+.idea
+
+# Latex
+*.log
+*.aux
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+
+# Jupyter
+.ipynb_checkpoints
+
+# Numpy binaries
+*.npy
+
+# tar.gz
+*.tar.gz
+
+# data set
+*.csv
