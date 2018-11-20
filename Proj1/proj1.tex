@@ -1,0 +1,106 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{booktabs}
+
+\usepackage{fancyhdr}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{multicol}
+\usepackage{enumerate}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{TSE, Ho Nam}
+\chead{Project \#1}
+\lhead{MATH4828B}
+\cfoot{\thepage}
+\begin{document}
+
+\subsubsection*{Question 1.}
+\begin{enumerate}[{(i)}]
+	\item \(P(B_1 = 1) = 1/3\)
+	\item \(P(B_2 = 0 | B_1 = 1) = 1\)
+	\item \(\begin{aligned}[t]
+		      P(B_1 = 1 | B_2 = 0) = \frac{P(B_1 = 1) }{ P(B_2=0)} \cdot P(B_2 = 0 | B_1 = 1) = \frac{1/3}{1}\cdot 1 = 1/3
+	      \end{aligned}\)
+
+	      Note \(P(B_2 = 0) = 1\) because the host always chooses the one that does not contain the prize.
+	\item We should change to \(B_3\) because it has a higher probability of being the prize:\[
+		      P(B_1 = 0 | B_2 = 0) = 1-P(B_1 = 1 | B_2 = 0) = 1 - \frac{1}{3} = \frac{2}{3}.
+	      \]
+
+\end{enumerate}
+
+\subsubsection*{Question 2.}
+\begin{enumerate}[{(i)}]
+	\item The maximum likelihood estimate of \(P(y=k)\) is \(N_k / N_{\text{doc}}\).
+	\item The maximum likelihood estimate of \(P(w_i | y=k)\) is \[\frac{\text{count}(w_i, k)}{\sum_{j=1}^K\text{count}(w_j, k)}.\]
+	\item We can perform Laplace smoothing, that estimates \(P(w_i | y=k)\) with
+	      \[
+		      \frac{\text{count}(w_i, k) + 1}{\sum_{j=1}^K\text{count}(w_j, k) + K}.
+	      \]
+	\item Infrequent words are likely not useful for classification since they are not as important and may likely act as noise instead, therefore those words can be neglected. Frequent words also do not contribute much to the meaning of text, therefore they also can be neglected.
+\end{enumerate}
+\newpage
+\subsubsection*{Question 3.}
+\begin{enumerate}[{(i)}]
+	\begin{multicols}{2}
+		\item \(P(y=+) = 5/8;\quad P(y=-) = 3/8\).
+		\item
+		\(
+		\begin{array}[t]{ccc}\toprule
+			\text{Vocabulary} & +       & -     \\\midrule
+			\text{annoying}   & 0.0     & 0.125 \\\midrule
+			\text{awesome}    & 0.08333 & 0.0   \\\midrule
+			\text{best}       & 0.08333 & 0.0   \\\midrule
+			\text{easy}       & 0.08333 & 0.0   \\\midrule
+			\text{good}       & 0.08333 & 0.0   \\\midrule
+			\text{great}      & 0.08333 & 0.0   \\\midrule
+			\text{is}         & 0.08333 & 0.125 \\\midrule
+			\text{one}        & 0.08333 & 0.0   \\\midrule
+			\text{rubbish}    & 0.0     & 0.125 \\\midrule
+			\text{so}         & 0.0     & 0.125 \\\midrule
+			\text{terrible}   & 0.0     & 0.125 \\\midrule
+			\text{the}        & 0.08333 & 0.0   \\\midrule
+			\text{this}       & 0.08333 & 0.125 \\\midrule
+			\text{to}         & 0.08333 & 0.0   \\\midrule
+			\text{use}        & 0.08333 & 0.0   \\\midrule
+			\text{version}    & 0.08333 & 0.125 \\\midrule
+			\text{very}       & 0.0     & 0.125 \\\bottomrule
+		\end{array}
+		\)
+		\item \(P(y=+) = 0.6;\quad P(y=-) = 0.4\).
+
+		\(
+		\begin{array}[t]{ccc}\toprule
+			\text{Vocabulary} & +        & -    \\\midrule
+			\text{annoying}   & 0.034483 & 0.08 \\\midrule
+			\text{awesome}    & 0.068966 & 0.04 \\\midrule
+			\text{best}       & 0.068966 & 0.04 \\\midrule
+			\text{easy}       & 0.068966 & 0.04 \\\midrule
+			\text{good}       & 0.068966 & 0.04 \\\midrule
+			\text{great}      & 0.068966 & 0.04 \\\midrule
+			\text{is}         & 0.068966 & 0.08 \\\midrule
+			\text{one}        & 0.068966 & 0.04 \\\midrule
+			\text{rubbish}    & 0.034483 & 0.08 \\\midrule
+			\text{so}         & 0.034483 & 0.08 \\\midrule
+			\text{terrible}   & 0.034483 & 0.08 \\\midrule
+			\text{the}        & 0.068966 & 0.04 \\\midrule
+			\text{this}       & 0.068966 & 0.08 \\\midrule
+			\text{to}         & 0.068966 & 0.04 \\\midrule
+			\text{use}        & 0.068966 & 0.04 \\\midrule
+			\text{version}    & 0.068966 & 0.08 \\\midrule
+			\text{very}       & 0.034483 & 0.08 \\\bottomrule
+		\end{array}
+		\)
+	\end{multicols}
+	\item \(P(y=+|d) = 0.65776549;\quad P(y=-|d) = 0.34223451\).
+
+	      Hence, we conclude the text \(d\) is positive.
+\end{enumerate}
+
+
+\end{document}
