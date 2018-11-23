@@ -7,17 +7,19 @@ from keras.models import Model, load_model
 from keras.layers import Input, Dense, Embedding, Dropout, TimeDistributed
 from keras.layers import LSTM
 from keras.optimizers import Adam
+from keras.callbacks import ReduceLROnPlateau, EarlyStopping
 import numpy as np
 from data_helper import load_data, build_input_data
 from scorer import scoring
-from utils import TestCallback, make_submission
+from utils import PerplexityCallback, make_submission
 
 
 def build_model(embedding_dim, hidden_size, drop, sequence_length, vocabulary_size):
     inputs = Input(shape=(sequence_length,), dtype='int32')
     # inputs -> [batch_size, sequence_length]
 
-    emb_layer = Embedding(input_dim=vocabulary_size, output_dim=embedding_dim, input_length=sequence_length)
+    emb_layer = Embedding(input_dim=vocabulary_size,
+                          output_dim=embedding_dim, input_length=sequence_length)
     # emb_layer.trainable = False
     # if you uncomment this line, the embeddings will be untrainable
 
@@ -29,16 +31,19 @@ def build_model(embedding_dim, hidden_size, drop, sequence_length, vocabulary_si
 
     # add a LSTM here, set units=hidden_size, dropout=drop, recurrent_dropout = drop, return_sequences=True
     # please read https://keras.io/layers/recurrent/
-    lstm_out_1 = LSTM(units=hidden_size, dropout=drop, recurrent_dropout=drop, return_sequences=True)(drop_embed)
+    lstm_out_1 = LSTM(units=hidden_size, dropout=drop,
+                      recurrent_dropout=drop, return_sequences=True)(drop_embed)
     # lstm_out_1 -> [batch_size, sequence_length, hidden_size]
 
-    lstm_out_2 = LSTM(units=hidden_size, dropout=drop, recurrent_dropout=drop, return_sequences=True)(lstm_out_1)
+    lstm_out_2 = LSTM(units=hidden_size, dropout=drop,
+                      recurrent_dropout=drop, return_sequences=True)(lstm_out_1)
     # lstm_out_1 -> [batch_size, sequence_length, hidden_size]
 
     # add a TimeDistributed here, set units=hidden_size, dropout=drop, recurrent_dropout = drop, return_sequences=True
     # please read  https://keras.io/layers/wrappers/
     # output: outputs -> [batch_size, sequence_length, vocabulary_size]
-    outputs = TimeDistributed(Dense(units=vocabulary_size, activation='softmax'))(lstm_out_2)
+    outputs = TimeDistributed(
+        Dense(units=vocabulary_size, activation='softmax'))(lstm_out_2)
 
     # End of Model Architecture
     # ----------------------------------------#
@@ -87,11 +92,17 @@ def main(opt):
 
         print('Vocab Size', vocabulary_size)
 
-        model = build_model(opt.embedding_dim, opt.hidden_size, opt.drop, sequence_length, vocabulary_size)
+        model = build_model(opt.embedding_dim, opt.hidden_size,
+                            opt.drop, sequence_length, vocabulary_size)
         print("Traning Model...")
+        early_stop = EarlyStopping(monitor='val_loss', min_delta=0, patience=5,
+                                   verbose=0, mode='auto', baseline=None, restore_best_weights=False)
+        reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.3,
+                                      patience=5, min_lr=1e-5)
         history = model.fit(x_train, y_train, batch_size=opt.batch_size,
                             epochs=opt.epochs, verbose=1,
-                            callbacks=[TestCallback((x_valid,y_valid), model=model)])
+                            validation_data=(x_valid, y_valid),
+                            callbacks=[PerplexityCallback((x_valid, y_valid), model=model), reduce_lr])
         model.save(opt.saved_model)
         print("Training cost time: ", time.time() - st)
 

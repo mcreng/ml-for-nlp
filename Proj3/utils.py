@@ -4,19 +4,20 @@ import numpy as np
 from keras.callbacks import Callback
 
 
-class TestCallback(Callback):
+class PerplexityCallback(Callback):
     """
     Calculate Perplexity
     """
+
     def __init__(self, test_data, model):
-        super(TestCallback, self).__init__()
+        super(PerplexityCallback, self).__init__()
         self.test_data = test_data
         self.model = model
 
     def on_epoch_end(self, epoch, logs={}):
         x, y = self.test_data
         x_probs = self.model.predict(x)
-        ppl = self.evaluate_batch_ppl(x_probs,y)
+        ppl = self.evaluate_batch_ppl(x_probs, y)
         print('\nValidation Set Perplexity: {0:.2f} \n'.format(ppl))
 
     def evaluate_ppl(self, x, y):
@@ -30,7 +31,7 @@ class TestCallback(Callback):
         y = y.reshape(-1)
         ppl = 0.0
         for i in range(math.ceil(len(x)/eval_batch_size)):
-            batch_x = x[i*eval_batch_size:(i+1)*eval_batch_size,:]
+            batch_x = x[i*eval_batch_size:(i+1)*eval_batch_size, :]
             batch_y = y[i*eval_batch_size:(i+1)*eval_batch_size]
             ppl += np.sum(np.log(np.diag(batch_x[:, batch_y])))
         return np.exp(-ppl/x.shape[0])
