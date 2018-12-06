@@ -4,13 +4,13 @@ import numpy as np
 from keras.callbacks import Callback
 
 
-class PerplexityCallback(Callback):
+class TestCallback(Callback):
     """
     Calculate Perplexity
     """
 
     def __init__(self, test_data, model):
-        super(PerplexityCallback, self).__init__()
+        super(TestCallback, self).__init__()
         self.test_data = test_data
         self.model = model
 
@@ -38,7 +38,7 @@ class PerplexityCallback(Callback):
 
 
 def make_submission(predict_dict, stuid, input_path):
-    assert stuid.isdigit(), "input valid student id!"
+    # assert stuid.isdigit(), "input valid student id!"
     if "valid" in input_path:
         filename = stuid + "_valid_result.csv"
     else:
