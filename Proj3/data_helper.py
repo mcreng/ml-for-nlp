@@ -22,12 +22,13 @@ def build_input_data(sentence, vocabulary):
     """
     unknown_token_id = vocabulary["<unk>"]
     vocab = vocabulary.keys()
-    sentence_id = [vocabulary[word] if word in vocab else unknown_token_id for word in sentence]
+    sentence_id = [vocabulary[word]
+                   if word in vocab else unknown_token_id for word in sentence]
 
     x = []
     y = []
 
-    num_sentences = math.ceil(len(sentence_id) / MAX_SEQ_LEN )
+    num_sentences = math.ceil(len(sentence_id) / MAX_SEQ_LEN)
     '''
     The the len of last sentence may be less than MAX_SEQ_LEN, so we pad it using tokens in the begining.
     corpus: a cat sits on the mat
@@ -65,5 +66,3 @@ def load_data(data_path, debug=False):
     x_valid, y_valid = build_input_data(valid_data, vocabulary)
 
     return x_train, y_train, x_valid, y_valid, vocab_size
-
-

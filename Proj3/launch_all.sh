@@ -1,8 +1,8 @@
 #!/bin/bash
-job=bidir
-for epoch in 5 25 50
+job=cnn
+for epoch in 1 2 3 4 
 do
-   for dropout in `seq 0.2 0.1 0.6`
+   for dropout in `seq 0.7 0.1 0.9`
    do
       for hidden in 500
       do
