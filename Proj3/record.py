@@ -12,6 +12,8 @@ for file in glob.glob("./*.log"):
             r'Your score on validation data: (\d*.\d*)', line)]
         scores = [re.findall(r'Your score on validation data: (\d*.\d*)', line)
                   for line in scores]
+        if len(scores) == 0: 
+            continue
         score = float("".join(scores[0]))
         args = re.split(r'-', file)[1:]  # remove filename
         args[-1] = args[-1][:-4]  # remove '.log'
@@ -22,5 +24,5 @@ for file in glob.glob("./*.log"):
 
 df = pd.DataFrame.from_dict(records)
 df = df[['Job', 'Epochs', 'Batch Size', 'Embed', 'Hidden', 'Dropout', 'Score']]
-print(df)
+print(df.sort_values('Score'))
 df.to_csv('./record.csv', index=False)
