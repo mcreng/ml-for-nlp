@@ -19,3 +19,8 @@
 
 # data set
 *.csv
+
+# Python dev
+__pycache__
+logs
+
