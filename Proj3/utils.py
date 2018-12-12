@@ -37,7 +37,7 @@ class TestCallback(Callback):
 
 
 def make_submission(predict_dict, stuid, input_path):
-    assert stuid.isdigit(), "input valid student id!"
+    # assert stuid.isdigit(), "input valid student id!"
     if "valid" in input_path:
         filename = stuid + "_valid_result.csv"
     else:

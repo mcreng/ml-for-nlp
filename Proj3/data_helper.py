@@ -2,68 +2,72 @@ import math
 import json
 import os
 import numpy as np
+import pandas as pd
 
-MAX_SEQ_LEN = 10
-
-
-def read_data_from_file(filename):
-    sentence = []
-    with open(filename, "r") as fin:
-        fin.readline()
-        for line in fin:
-            _, prev_sent, last_token = line.strip().split(",")
-            sentence += prev_sent.split() + [last_token, "<eos>"]
-    return sentence
-
-
-def build_input_data(sentence, vocabulary):
+def build_input_data(sentences, vocabulary):
     """
     Maps sentences and labels to vectors based on a vocabulary.
+    
+    Args:
+        sentences (pd.Dataframe): date frame of raw sentences
+        vocabulary (dict): Dictionary of vocab key pairs
+
+    Returns:
+        (list[int]): index list
+        (iterator): input word ids
+        (iterator): target word ids
+        int: number of sentences
     """
     unknown_token_id = vocabulary["<unk>"]
     vocab = vocabulary.keys()
-    sentence_id = [vocabulary[word] if word in vocab else unknown_token_id for word in sentence]
 
-    x = []
-    y = []
+    def sent2idx(sentence):
+        """
+        Converts words into ids from vocab.json
 
-    num_sentences = math.ceil(len(sentence_id) / MAX_SEQ_LEN )
-    '''
-    The the len of last sentence may be less than MAX_SEQ_LEN, so we pad it using tokens in the begining.
-    corpus: a cat sits on the mat
-    x(text): a cat sits
-    y(text): cat sits on
-    '''
-    sentence_id += sentence_id[:MAX_SEQ_LEN + 1]
-    while len(sentence_id) < MAX_SEQ_LEN:
-        sentence_id += sentence_id[:MAX_SEQ_LEN+1]
+        Args:
+            sentence (str): Raw string of sentence
 
-    for i in range(num_sentences):
-        x.append(sentence_id[i*MAX_SEQ_LEN:(i+1)*MAX_SEQ_LEN])
-        y_ = sentence_id[i*MAX_SEQ_LEN+1:(i+1)*MAX_SEQ_LEN+1]
-        y.append(y_)
-    x = np.array(x)
-    y = np.expand_dims(np.array(y), axis=-1)
-    return x, y
+        Returns:
+            sentence (list[int]): List of word ids
+        """
+        sentence = sentence.split(' ')
+        sentence = [vocabulary[word] if word in vocab else unknown_token_id for word in sentence]
+        return sentence
+
+    sentences = sentences.applymap(sent2idx)
+    
+    sentences['target'] = (sentences['sentence'].map(lambda a: a[1:]) + sentences['label']).map(lambda a: np.array([np.array([a]).T]))
+    sentences['sentence'] = sentences['sentence'].map(lambda a: np.array([a]))
+
+    return sentences.index.tolist(), iter(zip(sentences['sentence'].tolist(), sentences['target'].tolist())), len(sentences)
 
 
-def load_data(data_path, debug=False):
+def load_data(data_path, file):
+    """
+    Load data for training.
+
+    Args:
+        data_path (str): Data path
+        file (str): filename
+
+    Returns:
+        (list[int]): index list
+        (iterator): training data sets of (x, y)
+        (iterator): validation data sets of (x, y)
+        num_training_data (int): number of training data
+        num_valid_data (int): number of validation data
+        vocab_size (int): size of vocabulary
+    """
     # get the data paths
-    train_path = os.path.join(data_path, "valid.csv" if debug else "train.csv")
-    valid_path = os.path.join(data_path, "valid.csv")
+    path = os.path.join(data_path, "{}.csv".format(file))
     vocab_path = os.path.join(data_path, "vocab.json")
-
-    train_data = read_data_from_file(train_path)
-    valid_data = read_data_from_file(valid_path)
 
     # build vocabulary from training data
     vocabulary = json.load(open(vocab_path))
     vocab_size = len(vocabulary)
 
     # get input data
-    x_train, y_train = build_input_data(train_data, vocabulary)
-    x_valid, y_valid = build_input_data(valid_data, vocabulary)
+    idx, data, num_data = build_input_data(pd.read_csv(path, index_col=0), vocabulary)
 
-    return x_train, y_train, x_valid, y_valid, vocab_size
-
-
+    return idx, data, num_data, vocab_size
