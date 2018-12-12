@@ -14,8 +14,7 @@ def build_input_data(sentences, vocabulary):
 
     Returns:
         (list[int]): index list
-        (iterator): input word ids
-        (iterator): target word ids
+        (iterator): word ids
         int: number of sentences
     """
     unknown_token_id = vocabulary["<unk>"]
@@ -52,11 +51,9 @@ def load_data(data_path, file):
         file (str): filename
 
     Returns:
-        (list[int]): index list
-        (iterator): training data sets of (x, y)
-        (iterator): validation data sets of (x, y)
-        num_training_data (int): number of training data
-        num_valid_data (int): number of validation data
+        idx (list[int]): index list
+        data (iterator): datasets of (x, y)
+        num_data (int): number of data
         vocab_size (int): size of vocabulary
     """
     # get the data paths
