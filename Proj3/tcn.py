@@ -99,7 +99,7 @@ def main(opt):
 
     else:
         print('Loading data')
-        idx, test, num_testing_data, _ = load_data('data', opt.input)
+        idx, test, num_testing_data, _ = load_data('data', opt.input, training=True)
 
         def exhaust_data_gen():
             try:
