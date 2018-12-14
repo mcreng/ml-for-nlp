@@ -24,7 +24,8 @@ def build_model(embedding_dim, hidden_size, drop, vocabulary_size):
 
     tconv1 = TCN(nb_filters=hidden_size, dilations=[1, 2, 4, 8], return_sequences=True, dropout_rate=drop, name='tcn1')(embedding)
     lstm1 = LSTM(units=hidden_size, dropout=drop, recurrent_dropout=drop, return_sequences=True)(embedding)
-    outputs = Dense(units=vocabulary_size, activation='softmax')(concatenate([tconv1, lstm1, embedding]))
+    lstm2 = LSTM(units=hidden_size, dropout=drop, recurrent_dropout=drop, return_sequences=True)(lstm1)
+    outputs = Dense(units=vocabulary_size, activation='softmax')(concatenate([tconv1, lstm1, lstm2, embedding]))
 
     model = Model(inputs=inputs, outputs=outputs)
 
