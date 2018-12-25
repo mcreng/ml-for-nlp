@@ -32,7 +32,7 @@ def build_input_data(sentences, vocabulary, training=False):
         Returns:
             sentence (list[int]): List of word ids
         """
-        sentence = sentence.split(' ')
+        sentence = str(sentence).split(' ')
         sentence = [vocabulary[word] if word in vocab else unknown_token_id for word in sentence]
         return sentence
 
