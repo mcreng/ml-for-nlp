@@ -19,3 +19,5 @@ Project 2 is about Sentimental Analysis of text. Students are required to train 
 The model scores 7th out of 73 students.
 
 ### Project 3
+
+Project 3 is about Language Model. Students are required to train a network which given the first n-1 words of a sentence, the probability distribution of the last word of the sentence. View the report in it for more details. In short, a model with [TCN](https://github.com/philipperemy/keras-tcn) and LSTM with Embedding residual connection is used and achieved a score well beyond bonus.
