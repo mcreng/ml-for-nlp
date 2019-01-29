@@ -1,5 +1,9 @@
 ## HKUST COMP4901K/MATH4824B Project Repository
 
+> Score: Full mark + all bonus
+
+> Grade: A+
+
 This repository stores all project codes from said course, titled 'Machine Learning with Natural Language Processing'
 
 ### Project 1
